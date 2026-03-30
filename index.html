@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JaiGalleries | Timeless Photo Galleries</title>
+    <meta
+      name="description"
+      content="JaiGalleries showcases curated photo stories, featured albums, and a simple contact path for bookings and collaborations."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-row">
+        <a class="brand" href="#home">JaiGalleries</a>
+        <nav aria-label="Primary navigation">
+          <ul class="nav-list">
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="home">
+      <section class="hero container">
+        <p class="eyebrow">Photography that feels alive.</p>
+        <h1>Curated galleries for moments worth remembering.</h1>
+        <p class="hero-copy">
+          Browse featured albums, discover visual stories, and reach out for custom sessions or collaborations.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#gallery">View Gallery</a>
+          <a class="btn btn-secondary" href="#contact">Book a Session</a>
+        </div>
+      </section>
+
+      <section id="gallery" class="container section-spacing">
+        <div class="section-header">
+          <h2>Featured Galleries</h2>
+          <p>Replace these placeholders with your real albums and thumbnails.</p>
+        </div>
+        <div class="grid" role="list">
+          <article class="card" role="listitem">
+            <h3>Weddings</h3>
+            <p>Elegant highlights from ceremony to celebration.</p>
+          </article>
+          <article class="card" role="listitem">
+            <h3>Portraits</h3>
+            <p>Natural, personality-first portrait collections.</p>
+          </article>
+          <article class="card" role="listitem">
+            <h3>Events</h3>
+            <p>Corporate and private events captured with intent.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="about" class="container section-spacing">
+        <div class="section-header">
+          <h2>About JaiGalleries</h2>
+        </div>
+        <p>
+          We create polished and authentic photo stories for people, brands, and occasions.
+          Our process is simple: plan together, shoot with purpose, and deliver galleries you can share with confidence.
+        </p>
+      </section>
+
+      <section id="contact" class="container section-spacing">
+        <div class="section-header">
+          <h2>Contact</h2>
+          <p>Send your event date and location. We typically reply within 1 business day.</p>
+        </div>
+        <form class="contact-form" action="#" method="post">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" required />
+
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required />
+
+          <label for="message">Project details</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+
+          <button class="btn btn-primary" type="submit">Send inquiry</button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <p>© <span id="year"></span> JaiGalleries. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
