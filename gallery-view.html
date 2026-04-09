@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Gallery | JaiGalleries</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="gallery.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-row">
+        <a class="brand" href="index.html">JaiGalleries</a>
+        <nav aria-label="Primary navigation">
+          <ul class="nav-list">
+            <li><a href="index.html#gallery">Gallery</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="galleryMain" class="container">
+      <!-- Content injected by JS -->
+    </main>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+      <button class="lightbox-close" id="lightboxClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <img class="lightbox-img" id="lightboxImg" src="" alt="" />
+      <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+      <p class="lightbox-counter" id="lightboxCounter"></p>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <p>© <span id="year"></span> JaiGalleries. All rights reserved.</p>
+        <a href="client-gallery.html" class="footer-client-link">Client Galleries</a>
+      </div>
+    </footer>
+
+    <script src="galleries.js"></script>
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code") || "";
+      const main = document.getElementById("galleryMain");
+
+      // ── State helpers ──
+      function showState(icon, title, body) {
+        main.innerHTML =
+          '<div class="gallery-state fade-in">' +
+            '<div class="gallery-state-icon">' + icon + '</div>' +
+            '<h2>' + title + '</h2>' +
+            '<p>' + body + '</p>' +
+            '<a class="btn btn-secondary gallery-state-back" href="client-gallery.html">Back to Access Portal</a>' +
+          '</div>';
+      }
+
+      // ── Validate code ──
+      if (!code) {
+        showState("🔒", "No access code provided", "Please return to the portal and enter your access code.");
+        document.title = "Gallery Access | JaiGalleries";
+      } else {
+        const gallery = GALLERIES.find(function (g) {
+          return g.code.toUpperCase() === code.toUpperCase();
+        });
+
+        if (!gallery) {
+          showState("🚫", "Gallery not found", "That access code is not recognised. Please check your email and try again.");
+          document.title = "Gallery Not Found | JaiGalleries";
+        } else {
+          // ── Expiry check ──
+          if (gallery.expiresAt) {
+            const expiry = new Date(gallery.expiresAt);
+            expiry.setHours(23, 59, 59, 999);
+            if (new Date() > expiry) {
+              showState(
+                "⏳",
+                "This gallery has expired",
+                "Your gallery link was valid until " + gallery.expiresAt + ". Please contact us if you need access restored."
+              );
+              document.title = "Gallery Expired | JaiGalleries";
+            } else {
+              renderGallery(gallery);
+            }
+          } else {
+            renderGallery(gallery);
+          }
+        }
+      }
+
+      // ── Render gallery ──
+      function renderGallery(gallery) {
+        document.title = gallery.clientName + " | JaiGalleries";
+
+        var downloadBtn = "";
+        if (gallery.downloadUrl) {
+          downloadBtn =
+            '<a class="btn-download" href="' + escapeAttr(gallery.downloadUrl) + '" download>' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
+                '<polyline points="7 10 12 15 17 10"/>' +
+                '<line x1="12" y1="15" x2="12" y2="3"/>' +
+              '</svg>' +
+              'Download All' +
+            '</a>';
+        }
+
+        var gridItems = gallery.images.map(function (url, i) {
+          return (
+            '<div class="photo-item skeleton" data-index="' + i + '" role="button" tabindex="0" aria-label="View photo ' + (i + 1) + '">' +
+              '<img src="' + escapeAttr(url) + '" alt="Photo ' + (i + 1) + ' from ' + escapeHtml(gallery.clientName) + '" loading="lazy" />' +
+            '</div>'
+          );
+        }).join("");
+
+        main.innerHTML =
+          '<div class="gallery-header fade-in">' +
+            '<a class="gallery-back" href="client-gallery.html">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                '<polyline points="15 18 9 12 15 6"/>' +
+              '</svg>' +
+              'Back' +
+            '</a>' +
+            '<div class="gallery-meta">' +
+              '<div class="gallery-meta-text">' +
+                '<p class="gallery-eyebrow">Private Gallery</p>' +
+                '<h1>' + escapeHtml(gallery.clientName) + '</h1>' +
+                '<p class="gallery-event-title">' + escapeHtml(gallery.eventTitle) + '</p>' +
+              '</div>' +
+              downloadBtn +
+            '</div>' +
+          '</div>' +
+          '<div class="photo-grid fade-in" id="photoGrid">' +
+            gridItems +
+          '</div>';
+
+        // ── Lazy-load images & remove skeleton ──
+        var items = document.querySelectorAll(".photo-item");
+        items.forEach(function (item) {
+          var img = item.querySelector("img");
+          img.addEventListener("load", function () {
+            item.classList.remove("skeleton");
+            img.classList.add("loaded");
+          });
+          img.addEventListener("error", function () {
+            item.classList.remove("skeleton");
+            item.style.minHeight = "120px";
+          });
+
+          // keyboard open
+          item.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              openLightbox(parseInt(item.dataset.index, 10));
+            }
+          });
+
+          item.addEventListener("click", function () {
+            openLightbox(parseInt(item.dataset.index, 10));
+          });
+        });
+
+        initLightbox(gallery.images);
+      }
+
+      // ── Lightbox ──
+      var currentIndex = 0;
+      var galleryImages = [];
+
+      function initLightbox(images) {
+        galleryImages = images;
+
+        var lb = document.getElementById("lightbox");
+        var lbImg = document.getElementById("lightboxImg");
+        var lbClose = document.getElementById("lightboxClose");
+        var lbPrev = document.getElementById("lightboxPrev");
+        var lbNext = document.getElementById("lightboxNext");
+        var lbCounter = document.getElementById("lightboxCounter");
+
+        lbClose.addEventListener("click", closeLightbox);
+
+        lb.addEventListener("click", function (e) {
+          if (e.target === lb) closeLightbox();
+        });
+
+        lbPrev.addEventListener("click", function () {
+          navigate(-1);
+        });
+
+        lbNext.addEventListener("click", function () {
+          navigate(1);
+        });
+
+        document.addEventListener("keydown", function (e) {
+          if (!lb.classList.contains("open")) return;
+          if (e.key === "Escape") closeLightbox();
+          if (e.key === "ArrowLeft") navigate(-1);
+          if (e.key === "ArrowRight") navigate(1);
+        });
+
+        function navigate(dir) {
+          currentIndex = (currentIndex + dir + galleryImages.length) % galleryImages.length;
+          lbImg.src = galleryImages[currentIndex];
+          lbImg.alt = "Photo " + (currentIndex + 1);
+          lbCounter.textContent = (currentIndex + 1) + " / " + galleryImages.length;
+        }
+
+        window.openLightbox = function (index) {
+          currentIndex = index;
+          lbImg.src = galleryImages[currentIndex];
+          lbImg.alt = "Photo " + (currentIndex + 1);
+          lbCounter.textContent = (currentIndex + 1) + " / " + galleryImages.length;
+
+          lb.classList.add("open");
+          document.body.style.overflow = "hidden";
+          // trigger transition
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              lb.classList.add("visible");
+            });
+          });
+        };
+
+        window.closeLightbox = function () {
+          lb.classList.remove("visible");
+          setTimeout(function () {
+            lb.classList.remove("open");
+            document.body.style.overflow = "";
+          }, 250);
+        };
+      }
+
+      // ── Escape helpers ──
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function escapeAttr(str) {
+        return String(str).replace(/"/g, "%22").replace(/'/g, "%27");
+      }
+    </script>
+  </body>
+</html>

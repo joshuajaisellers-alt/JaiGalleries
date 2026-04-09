@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client Gallery Access | JaiGalleries</title>
+    <meta
+      name="description"
+      content="Enter your private access code to view your JaiGalleries photo gallery."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="gallery.css" />
+  </head>
+  <body>
+    <div class="portal-wrap">
+      <a class="portal-logo" href="index.html">
+        Jai<span>Galleries</span>
+      </a>
+
+      <div class="portal-card fade-in">
+        <p class="portal-eyebrow">Private Access</p>
+        <h1>Access Your Gallery</h1>
+        <p class="portal-sub">
+          Enter the access code from your delivery email to view your private photo gallery.
+        </p>
+
+        <form class="code-form" id="codeForm" novalidate>
+          <label for="codeInput">Access Code</label>
+          <input
+            class="code-input"
+            id="codeInput"
+            name="code"
+            type="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            placeholder="e.g. JAI-2024-SMITH"
+            aria-describedby="codeError"
+            required
+          />
+          <p class="code-error" id="codeError" role="alert">
+            That code wasn't found. Please double-check your email and try again.
+          </p>
+          <button class="portal-submit" type="submit">View My Gallery</button>
+        </form>
+      </div>
+
+      <p class="portal-footer-note">
+        Didn't receive a code?
+        <a href="index.html#contact" class="portal-contact-link">Contact us</a>
+        and we'll resend it.
+      </p>
+    </div>
+
+    <script src="galleries.js"></script>
+    <script>
+      const form = document.getElementById("codeForm");
+      const input = document.getElementById("codeInput");
+      const errorEl = document.getElementById("codeError");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const raw = input.value.trim().toUpperCase();
+
+        const match = GALLERIES.find(function (g) {
+          return g.code.toUpperCase() === raw;
+        });
+
+        if (match) {
+          input.classList.remove("is-error");
+          errorEl.classList.remove("visible");
+          window.location.href = "gallery-view.html?code=" + encodeURIComponent(match.code);
+        } else {
+          input.classList.add("is-error");
+          errorEl.classList.add("visible");
+          input.focus();
+        }
+      });
+
+      input.addEventListener("input", function () {
+        if (input.classList.contains("is-error")) {
+          input.classList.remove("is-error");
+          errorEl.classList.remove("visible");
+        }
+      });
+    </script>
+  </body>
+</html>
