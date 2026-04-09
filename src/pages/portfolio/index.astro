@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPortfolio, featuredImage } from "../../lib/wp";
+
+const items = await getPortfolio(50);
+---
+
+<BaseLayout title="Portfolio — Jai Sellers">
+  <h1>Portfolio</h1>
+  <p class="meta">Selected case studies and client outcomes.</p>
+
+  <section class="section grid">
+    {
+      items.map((item) => {
+        const image = featuredImage(item);
+        return (
+          <article class="card" style="grid-column: span 4;">
+            {
+              image && (
+                <img
+                  src={image}
+                  alt={item.title.rendered}
+                  style="width:100%;height:230px;object-fit:cover;margin-bottom:0.75rem;"
+                />
+              )
+            }
+            <h2 style="font-size:1.5rem;">
+              <a href={`/portfolio/${item.slug}`}>{item.title.rendered}</a>
+            </h2>
+          </article>
+        );
+      })
+    }
+  </section>
+</BaseLayout>

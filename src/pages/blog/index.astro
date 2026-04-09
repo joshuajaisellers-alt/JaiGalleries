@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPosts, formatDate } from "../../lib/wp";
+
+const posts = await getPosts(50);
+---
+
+<BaseLayout title="Blog — Jai Sellers">
+  <h1>Blog</h1>
+  <p class="meta">Insights on strategy, systems, and execution.</p>
+
+  <section class="section">
+    {
+      posts.map((post) => (
+        <article class="card" style="margin-bottom:1rem;">
+          <h2>
+            <a href={`/blog/${post.slug}`}>{post.title.rendered}</a>
+          </h2>
+          <p class="meta">{formatDate(post.date)}</p>
+          <div set:html={post.excerpt?.rendered || ""} />
+        </article>
+      ))
+    }
+  </section>
+</BaseLayout>
