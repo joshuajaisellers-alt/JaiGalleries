@@ -157,6 +157,13 @@ textarea {
   color: var(--muted);
 }
 
+.footer-client-link {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+  opacity: 0.7;
+}
+
 @media (max-width: 640px) {
   .nav-row {
     flex-direction: column;
