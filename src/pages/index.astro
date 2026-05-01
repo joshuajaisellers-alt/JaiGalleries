@@ -1,8 +1,20 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getPosts, getPortfolio, formatDate, featuredImage } from "../lib/wp";
+import {
+  getPostsSafe,
+  getPortfolioSafe,
+  formatDate,
+  featuredImage,
+} from "../lib/wp";
 
-const [posts, portfolioItems] = await Promise.all([getPosts(3), getPortfolio(3)]);
+const [postsResult, portfolioResult] = await Promise.all([
+  getPostsSafe(3),
+  getPortfolioSafe(3),
+]);
+
+const posts = postsResult.data;
+const portfolioItems = portfolioResult.data;
+const homepageError = postsResult.error || portfolioResult.error;
 ---
 
 <BaseLayout title="Jai Sellers — Consulting">
@@ -12,21 +24,32 @@ const [posts, portfolioItems] = await Promise.all([getPosts(3), getPortfolio(3)]
       Minimal, practical strategy across operations, systems, and digital
       execution.
     </p>
+    {
+      homepageError && (
+        <p class="meta">Content is temporarily unavailable while CMS access is being restored.</p>
+      )
+    }
   </section>
 
   <section class="section">
     <h2>Latest Blog Posts</h2>
     <div class="grid">
       {
-        posts.map((post) => (
+        posts.length > 0 ? (
+          posts.map((post) => (
+            <article class="card" style="grid-column: span 12;">
+              <h3>
+                <a href={`/blog/${post.slug}`}>{post.title.rendered}</a>
+              </h3>
+              <p class="meta">{formatDate(post.date)}</p>
+              <div set:html={post.excerpt?.rendered || ""} />
+            </article>
+          ))
+        ) : (
           <article class="card" style="grid-column: span 12;">
-            <h3>
-              <a href={`/blog/${post.slug}`}>{post.title.rendered}</a>
-            </h3>
-            <p class="meta">{formatDate(post.date)}</p>
-            <div set:html={post.excerpt?.rendered || ""} />
+            <p class="meta">No blog posts available yet.</p>
           </article>
-        ))
+        )
       }
     </div>
   </section>
@@ -35,25 +58,31 @@ const [posts, portfolioItems] = await Promise.all([getPosts(3), getPortfolio(3)]
     <h2>Latest Portfolio Work</h2>
     <div class="grid">
       {
-        portfolioItems.map((item) => {
-          const image = featuredImage(item);
-          return (
-            <article class="card" style="grid-column: span 4;">
-              {
-                image && (
-                  <img
-                    src={image}
-                    alt={item.title.rendered}
-                    style="width:100%;height:220px;object-fit:cover;margin-bottom:0.75rem;"
-                  />
-                )
-              }
-              <h3>
-                <a href={`/portfolio/${item.slug}`}>{item.title.rendered}</a>
-              </h3>
-            </article>
-          );
-        })
+        portfolioItems.length > 0 ? (
+          portfolioItems.map((item) => {
+            const image = featuredImage(item);
+            return (
+              <article class="card" style="grid-column: span 4;">
+                {
+                  image && (
+                    <img
+                      src={image}
+                      alt={item.title.rendered}
+                      style="width:100%;height:220px;object-fit:cover;margin-bottom:0.75rem;"
+                    />
+                  )
+                }
+                <h3>
+                  <a href={`/portfolio/${item.slug}`}>{item.title.rendered}</a>
+                </h3>
+              </article>
+            );
+          })
+        ) : (
+          <article class="card" style="grid-column: span 12;">
+            <p class="meta">No portfolio items available yet.</p>
+          </article>
+        )
       }
     </div>
   </section>

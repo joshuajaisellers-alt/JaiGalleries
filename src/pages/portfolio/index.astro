@@ -1,35 +1,47 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getPortfolio, featuredImage } from "../../lib/wp";
+import { getPortfolioSafe, featuredImage } from "../../lib/wp";
 
-const items = await getPortfolio(50);
+const itemsResult = await getPortfolioSafe(50);
+const items = itemsResult.data;
 ---
 
 <BaseLayout title="Portfolio — Jai Sellers">
   <h1>Portfolio</h1>
   <p class="meta">Selected case studies and client outcomes.</p>
+  {
+    itemsResult.error && (
+      <p class="meta">Portfolio content is temporarily unavailable while CMS access is being restored.</p>
+    )
+  }
 
   <section class="section grid">
     {
-      items.map((item) => {
-        const image = featuredImage(item);
-        return (
-          <article class="card" style="grid-column: span 4;">
-            {
-              image && (
-                <img
-                  src={image}
-                  alt={item.title.rendered}
-                  style="width:100%;height:230px;object-fit:cover;margin-bottom:0.75rem;"
-                />
-              )
-            }
-            <h2 style="font-size:1.5rem;">
-              <a href={`/portfolio/${item.slug}`}>{item.title.rendered}</a>
-            </h2>
+      items.length > 0 ? (
+        items.map((item) => {
+          const image = featuredImage(item);
+          return (
+            <article class="card" style="grid-column: span 4;">
+              {
+                image && (
+                  <img
+                    src={image}
+                    alt={item.title.rendered}
+                    style="width:100%;height:230px;object-fit:cover;margin-bottom:0.75rem;"
+                  />
+                )
+              }
+              <h2 style="font-size:1.5rem;">
+                <a href={`/portfolio/${item.slug}`}>{item.title.rendered}</a>
+              </h2>
+            </article>
+          );
+        })
+      ) : (
+        <article class="card" style="grid-column: span 12;">
+          <p class="meta">No portfolio items published yet.</p>
           </article>
-        );
-      })
+      )
     }
   </section>
 </BaseLayout>

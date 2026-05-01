@@ -1,21 +1,24 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
-  getPortfolio,
-  getPortfolioBySlug,
+  getPortfolioSafe,
+  getPortfolioBySlugSafe,
   formatDate,
   featuredImage,
 } from "../../lib/wp";
 
 export async function getStaticPaths() {
-  const items = await getPortfolio(100);
-  return items.map((item) => ({
+  const itemsResult = await getPortfolioSafe(100);
+  return itemsResult.data.map((item) => ({
     params: { slug: item.slug },
   }));
 }
 
 const { slug } = Astro.params;
-const item = slug ? await getPortfolioBySlug(slug) : null;
+const itemResult = slug
+  ? await getPortfolioBySlugSafe(slug)
+  : { data: null, error: null };
+const item = itemResult.data;
 
 if (!item) {
   return Astro.redirect("/portfolio");

@@ -19,6 +19,11 @@ export type WPItem = {
   };
 };
 
+export type WPResult<T> = {
+  data: T;
+  error: string | null;
+};
+
 async function wpFetch<T>(path: string): Promise<T> {
   const response = await fetch(`${WP_API_BASE}${path}`, {
     headers: {
@@ -33,6 +38,26 @@ async function wpFetch<T>(path: string): Promise<T> {
   }
 
   return response.json();
+}
+
+async function wpSafe<T>(
+  fetcher: () => Promise<T>,
+  fallback: T,
+): Promise<WPResult<T>> {
+  try {
+    const data = await fetcher();
+    return { data, error: null };
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Could not load data from WordPress at this time.";
+
+    return {
+      data: fallback,
+      error: message,
+    };
+  }
 }
 
 export const getPosts = (limit = 10) =>
@@ -50,6 +75,18 @@ export const getPortfolioBySlug = async (slug: string) => {
   const items = await wpFetch<WPItem[]>(`/portfolio?slug=${slug}&_embed`);
   return items[0] || null;
 };
+
+export const getPostsSafe = (limit = 10) =>
+  wpSafe(() => getPosts(limit), [] as WPItem[]);
+
+export const getPortfolioSafe = (limit = 12) =>
+  wpSafe(() => getPortfolio(limit), [] as WPItem[]);
+
+export const getPostBySlugSafe = (slug: string) =>
+  wpSafe(() => getPostBySlug(slug), null as WPItem | null);
+
+export const getPortfolioBySlugSafe = (slug: string) =>
+  wpSafe(() => getPortfolioBySlug(slug), null as WPItem | null);
 
 export const formatDate = (isoDate: string) =>
   new Date(isoDate).toLocaleDateString("en-US", {

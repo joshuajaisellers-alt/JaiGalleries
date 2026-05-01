@@ -1,16 +1,17 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getPosts, getPostBySlug, formatDate } from "../../lib/wp";
+import { getPostsSafe, getPostBySlugSafe, formatDate } from "../../lib/wp";
 
 export async function getStaticPaths() {
-  const posts = await getPosts(100);
-  return posts.map((post) => ({
+  const postsResult = await getPostsSafe(100);
+  return postsResult.data.map((post) => ({
     params: { slug: post.slug },
   }));
 }
 
 const { slug } = Astro.params;
-const post = slug ? await getPostBySlug(slug) : null;
+const postResult = slug ? await getPostBySlugSafe(slug) : { data: null, error: null };
+const post = postResult.data;
 
 if (!post) {
   return Astro.redirect("/blog");
