@@ -15,9 +15,11 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const itemResult = slug
-  ? await getPortfolioBySlugSafe(slug)
-  : { data: null, error: null };
+if (!slug) {
+  return Astro.redirect("/portfolio");
+}
+
+const itemResult = await getPortfolioBySlugSafe(slug);
 const item = itemResult.data;
 
 if (!item) {

@@ -10,7 +10,11 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const postResult = slug ? await getPostBySlugSafe(slug) : { data: null, error: null };
+if (!slug) {
+  return Astro.redirect("/blog");
+}
+
+const postResult = await getPostBySlugSafe(slug);
 const post = postResult.data;
 
 if (!post) {
