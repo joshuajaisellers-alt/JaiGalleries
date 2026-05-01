@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPostsSafe, formatDate } from "../../lib/wp";
+
+const postsResult = await getPostsSafe(50);
+const posts = postsResult.data;
+---
+
+<BaseLayout title="Blog — Jai Sellers">
+  <h1>Blog</h1>
+  <p class="meta">Insights on strategy, systems, and execution.</p>
+  {
+    postsResult.error && (
+      <p class="meta">Blog content is temporarily unavailable while CMS access is being restored.</p>
+    )
+  }
+
+  <section class="section">
+    {
+      posts.length > 0 ? (
+        posts.map((post) => (
+          <article class="card" style="margin-bottom:1rem;">
+            <h2>
+              <a href={`/blog/${post.slug}`}>{post.title.rendered}</a>
+            </h2>
+            <p class="meta">{formatDate(post.date)}</p>
+            <div set:html={post.excerpt?.rendered || ""} />
+          </article>
+        ))
+      ) : (
+        <article class="card">
+          <p class="meta">No blog posts published yet.</p>
+        </article>
+      )
+    }
+  </section>
+</BaseLayout>

@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPostsSafe, getPostBySlugSafe, formatDate } from "../../lib/wp";
+
+export async function getStaticPaths() {
+  const postsResult = await getPostsSafe(100);
+  return postsResult.data.map((post) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const postResult = slug ? await getPostBySlugSafe(slug) : { data: null, error: null };
+const post = postResult.data;
+
+if (!post) {
+  return Astro.redirect("/blog");
+}
+---
+
+<BaseLayout title={`${post.title.rendered} — Blog`}>
+  <article>
+    <h1>{post.title.rendered}</h1>
+    <p class="meta">{formatDate(post.date)}</p>
+    <div class="post-content" set:html={post.content?.rendered || ""} />
+  </article>
+</BaseLayout>
