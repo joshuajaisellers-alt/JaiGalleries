@@ -19,11 +19,6 @@ export type WPItem = {
   };
 };
 
-export type WPResult<T> = {
-  data: T;
-  error: string | null;
-};
-
 async function wpFetch<T>(path: string): Promise<T> {
   const response = await fetch(`${WP_API_BASE}${path}`, {
     headers: {
@@ -38,23 +33,6 @@ async function wpFetch<T>(path: string): Promise<T> {
   }
 
   return response.json();
-}
-
-async function wpSafe<T>(fetcher: () => Promise<T>, fallback: T): Promise<WPResult<T>> {
-  try {
-    const data = await fetcher();
-    return { data, error: null };
-  } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : "Could not load data from WordPress at this time.";
-
-    return {
-      data: fallback,
-      error: message,
-    };
-  }
 }
 
 export const getPosts = (limit = 10) =>
