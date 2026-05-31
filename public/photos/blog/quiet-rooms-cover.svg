@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Interior photo placeholder</title>
+  <desc id="desc">Minimal room-inspired placeholder with warm neutral shapes.</desc>
+  <rect width="1200" height="800" fill="#faf8f5"/>
+  <rect x="160" y="120" width="880" height="560" fill="#f7f5f2" stroke="#ddd7cf" stroke-width="6"/>
+  <path d="M300 680 L520 330 L760 680" fill="#ddd7cf"/>
+  <circle cx="805" cy="285" r="82" fill="#1a1a1a" opacity="0.8"/>
+</svg>

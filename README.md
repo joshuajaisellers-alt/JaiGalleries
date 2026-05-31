@@ -1,51 +1,64 @@
-# JaiGalleries
+# Jai Sellers — Galleries
 
-JaiGalleries is now a lightweight, starter website you can run locally and customize.
+This repository contains a static Astro photo/blog site for **jaisellers.com/galleries**. Blog posts and photo sets are edited directly in local files, with no remote CMS required.
 
-## What improved
-This project now includes:
-- A complete one-page site (`index.html`) with:
-  - clear hero section,
-  - featured gallery section,
-  - about section,
-  - contact form,
-  - and simple navigation.
-- A modern, responsive stylesheet (`styles.css`) focused on readability and mobile usability.
+## Stack
+- Astro
+- Local TypeScript content files
+- Static photo assets in `public/photos`
+- Vercel static deployment
 
-## How to use it
+## Routes implemented
+- `/galleries`
+- `/galleries/blog`
+- `/galleries/blog/[slug]`
+- `/galleries/portfolio`
+- `/galleries/portfolio/[slug]`
+- `/galleries/about`
+- `/galleries/contact`
 
-### 1) Run locally
-From this repo folder, run:
+## Add a blog post with photos
+1. Add images to:
+   ```powershell
+   public/photos/blog
+   ```
+2. Open `src/data/blog.ts`.
+3. Duplicate an existing post object in the `blogPosts` array.
+4. Update the `slug`, `title`, `date`, `excerpt`, `coverImage`, `content`, and `photos` values.
+5. Reference images like this:
+   ```ts
+   photos: [
+     {
+       src: "photos/blog/my-photo.jpg",
+       alt: "Short accessible description of the image.",
+       caption: "Optional caption shown below the image.",
+     },
+   ]
+   ```
 
-```bash
-python3 -m http.server 8000
-```
+## Add portfolio work
+1. Add images to `public/photos/portfolio`.
+2. Update `src/data/portfolio.ts`.
 
-Then open: `http://localhost:8000`
+## Local setup
+1. Install dependencies:
+   ```powershell
+   npm install
+   ```
+2. Start dev server:
+   ```powershell
+   npm run dev
+   ```
 
-### 2) Customize content
-Edit `index.html`:
-- Update the headline and intro text in the hero section.
-- Replace featured gallery placeholders with real categories.
-- Update the About copy to reflect your brand.
-- Set your real contact workflow (email form backend or service).
+## Deployment (Vercel)
+1. Push this repo to GitHub.
+2. Import into Vercel as an Astro project.
+3. Use build command `astro build` and output directory `dist`.
+4. The Astro app is configured with `base: "/galleries"`, so deploy it where `jaisellers.com/galleries` serves this project.
+5. Set environment variable:
+   - `PUBLIC_SITE_URL=https://jaisellers.com/galleries`
 
-### 3) Customize look and feel
-Edit `styles.css`:
-- Change colors in the `:root` variables.
-- Adjust spacing/typography for your visual style.
-- Keep contrast high for accessibility.
-
-### 4) Launch checklist
-Before publishing:
-- Compress and optimize all images.
-- Add real gallery thumbnails with descriptive alt text.
-- Connect contact form handling (backend or provider).
-- Add analytics and metadata/social previews.
-- Test on phone + desktop.
-
-## Suggested next step
-If you want, I can next add:
-1. a proper multi-page version (`gallery.html`, `about.html`, `contact.html`),
-2. image cards with real thumbnails,
-3. and a working contact integration pattern.
+## Notes
+- `src/data/blog.ts` is the main place to add blog posts and photo sets.
+- `public/photos/README.md` includes the short image-reference format.
+- Use descriptive `alt` text for accessibility.

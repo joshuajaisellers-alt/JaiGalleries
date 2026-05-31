@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getBlogPosts, formatDate } from "../data/blog";
+import { getPortfolioItems } from "../data/portfolio";
+import { sitePath } from "../lib/paths";
+
+const posts = getBlogPosts(3);
+const portfolioItems = getPortfolioItems(3);
+---
+
+<BaseLayout title="Jai Sellers — Galleries">
+  <section>
+    <h1>Image-led stories, notes, and galleries.</h1>
+    <p class="meta">
+      A simple local publishing space for photo essays, blog posts, and selected
+      visual work — no external CMS required.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>Latest Blog Posts</h2>
+    <div class="grid">
+      {
+        posts.map((post) => (
+          <article class="card" style="grid-column: span 4;">
+            {
+              post.coverImage && (
+                <img
+                  src={sitePath(post.coverImage)}
+                  alt={post.coverAlt || post.title}
+                  style="width:100%;height:220px;object-fit:cover;margin-bottom:0.75rem;"
+                />
+              )
+            }
+            <h3>
+              <a href={sitePath(`blog/${post.slug}`)}>{post.title}</a>
+            </h3>
+            <p class="meta">{formatDate(post.date)}</p>
+            <p>{post.excerpt}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Selected Work</h2>
+    <div class="grid">
+      {
+        portfolioItems.map((item) => (
+          <article class="card" style="grid-column: span 4;">
+            {
+              item.coverImage && (
+                <img
+                  src={sitePath(item.coverImage)}
+                  alt={item.coverAlt || item.title}
+                  style="width:100%;height:220px;object-fit:cover;margin-bottom:0.75rem;"
+                />
+              )
+            }
+            <h3>
+              <a href={sitePath(`portfolio/${item.slug}`)}>{item.title}</a>
+            </h3>
+            <p>{item.excerpt}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

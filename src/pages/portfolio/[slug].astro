@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPortfolioItems, getPortfolioItemBySlug } from "../../data/portfolio";
+import { formatDate } from "../../data/blog";
+import { sitePath } from "../../lib/paths";
+
+export function getStaticPaths() {
+  return getPortfolioItems().map((item) => ({
+    params: { slug: item.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const item = slug ? getPortfolioItemBySlug(slug) : null;
+
+if (!item) {
+  return Astro.redirect(sitePath("portfolio"));
+}
+---
+
+<BaseLayout title={`${item.title} — Portfolio`} description={item.excerpt}>
+  <article>
+    <h1>{item.title}</h1>
+    <p class="meta">{formatDate(item.date)}</p>
+
+    {
+      item.coverImage && (
+        <img
+          src={sitePath(item.coverImage)}
+          alt={item.coverAlt || item.title}
+          style="width:100%;max-height:520px;object-fit:cover;margin:1rem 0 1.5rem;"
+        />
+      )
+    }
+
+    <div class="case-content">
+      {item.content.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+
+    {
+      item.details && Object.keys(item.details).length > 0 && (
+        <section class="section">
+          <h2>Project Details</h2>
+          <div class="card details-list">
+            {Object.entries(item.details).map(([label, value]) => (
+              <p><strong>{label}:</strong> {value}</p>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>

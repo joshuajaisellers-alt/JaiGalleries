@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPortfolioItems } from "../../data/portfolio";
+import { formatDate } from "../../data/blog";
+import { sitePath } from "../../lib/paths";
+
+const items = getPortfolioItems();
+---
+
+<BaseLayout title="Portfolio — Jai Sellers Galleries">
+  <h1>Portfolio</h1>
+  <p class="meta">Selected case studies and image-led work maintained locally.</p>
+
+  <section class="section grid">
+    {
+      items.map((item) => (
+        <article class="card" style="grid-column: span 4;">
+          {
+            item.coverImage && (
+              <img
+                src={sitePath(item.coverImage)}
+                alt={item.coverAlt || item.title}
+                style="width:100%;height:230px;object-fit:cover;margin-bottom:0.75rem;"
+              />
+            )
+          }
+          <h2 style="font-size:1.5rem;">
+            <a href={sitePath(`portfolio/${item.slug}`)}>{item.title}</a>
+          </h2>
+          <p class="meta">{formatDate(item.date)}</p>
+          <p>{item.excerpt}</p>
+        </article>
+      ))
+    }
+  </section>
+</BaseLayout>
