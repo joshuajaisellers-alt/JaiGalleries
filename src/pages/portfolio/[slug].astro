@@ -1,55 +1,50 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import {
-  getPortfolio,
-  getPortfolioBySlug,
-  formatDate,
-  featuredImage,
-} from "../../lib/wp";
+import { getPortfolioItems, getPortfolioItemBySlug } from "../../data/portfolio";
+import { formatDate } from "../../data/blog";
+import { sitePath } from "../../lib/paths";
 
-export async function getStaticPaths() {
-  const items = await getPortfolio(100);
-  return items.map((item) => ({
+export function getStaticPaths() {
+  return getPortfolioItems().map((item) => ({
     params: { slug: item.slug },
   }));
 }
 
 const { slug } = Astro.params;
-const item = slug ? await getPortfolioBySlug(slug) : null;
+const item = slug ? getPortfolioItemBySlug(slug) : null;
 
 if (!item) {
-  return Astro.redirect("/portfolio");
+  return Astro.redirect(sitePath("portfolio"));
 }
-
-const hero = featuredImage(item);
-const customFields = item.acf || item.meta || {};
 ---
 
-<BaseLayout title={`${item.title.rendered} — Portfolio`}>
+<BaseLayout title={`${item.title} — Portfolio`} description={item.excerpt}>
   <article>
-    <h1>{item.title.rendered}</h1>
+    <h1>{item.title}</h1>
     <p class="meta">{formatDate(item.date)}</p>
 
     {
-      hero && (
+      item.coverImage && (
         <img
-          src={hero}
-          alt={item.title.rendered}
+          src={sitePath(item.coverImage)}
+          alt={item.coverAlt || item.title}
           style="width:100%;max-height:520px;object-fit:cover;margin:1rem 0 1.5rem;"
         />
       )
     }
 
-    <div class="case-content" set:html={item.content?.rendered || ""} />
+    <div class="case-content">
+      {item.content.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
 
     {
-      Object.keys(customFields).length > 0 && (
+      item.details && Object.keys(item.details).length > 0 && (
         <section class="section">
           <h2>Project Details</h2>
-          <div class="card">
-            <pre style="white-space:pre-wrap;margin:0;">
-              {JSON.stringify(customFields, null, 2)}
-            </pre>
+          <div class="card details-list">
+            {Object.entries(item.details).map(([label, value]) => (
+              <p><strong>{label}:</strong> {value}</p>
+            ))}
           </div>
         </section>
       )

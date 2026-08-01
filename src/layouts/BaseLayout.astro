@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { sitePath } from "../lib/paths";
 
 interface Props {
   title: string;
@@ -28,11 +29,11 @@ const {
   <body>
     <header class="site-header">
       <div class="container nav">
-        <a href="/">Home</a>
-        <a href="/blog">Blog</a>
-        <a href="/portfolio">Portfolio</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
+        <a href={sitePath()}>Home</a>
+        <a href={sitePath("blog")}>Blog</a>
+        <a href={sitePath("portfolio")}>Portfolio</a>
+        <a href={sitePath("about")}>About</a>
+        <a href={sitePath("contact")}>Contact</a>
       </div>
     </header>
 

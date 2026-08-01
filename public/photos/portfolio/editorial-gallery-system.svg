@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Portfolio placeholder</title>
+  <desc id="desc">A grid-inspired placeholder for an editorial gallery system.</desc>
+  <rect width="1200" height="800" fill="#f7f5f2"/>
+  <rect x="140" y="130" width="270" height="420" fill="#1a1a1a" opacity="0.88"/>
+  <rect x="465" y="130" width="270" height="270" fill="#ddd7cf"/>
+  <rect x="790" y="130" width="270" height="420" fill="#9b8f82" opacity="0.72"/>
+  <rect x="465" y="455" width="270" height="160" fill="#1a1a1a" opacity="0.72"/>
+</svg>

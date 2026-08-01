@@ -105,3 +105,44 @@ main {
     grid-column: span 12 !important;
   }
 }
+
+code {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.35rem;
+  background: #faf8f5;
+  font-size: 0.88em;
+}
+
+.photo-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.photo-grid figure {
+  margin: 0;
+}
+
+.photo-grid img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border);
+}
+
+.photo-grid figcaption {
+  margin-top: 0.55rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.details-list p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 760px) {
+  .photo-grid {
+    grid-template-columns: 1fr;
+  }
+}
