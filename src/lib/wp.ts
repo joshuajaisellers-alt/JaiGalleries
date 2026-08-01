@@ -51,6 +51,17 @@ export const getPortfolioBySlug = async (slug: string) => {
   return items[0] || null;
 };
 
+export const getPostsSafe = (limit = 10) => wpSafe(() => getPosts(limit), [] as WPItem[]);
+
+export const getPortfolioSafe = (limit = 12) =>
+  wpSafe(() => getPortfolio(limit), [] as WPItem[]);
+
+export const getPostBySlugSafe = (slug: string) =>
+  wpSafe(() => getPostBySlug(slug), null as WPItem | null);
+
+export const getPortfolioBySlugSafe = (slug: string) =>
+  wpSafe(() => getPortfolioBySlug(slug), null as WPItem | null);
+
 export const formatDate = (isoDate: string) =>
   new Date(isoDate).toLocaleDateString("en-US", {
     year: "numeric",
